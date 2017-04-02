@@ -9,7 +9,7 @@ CREATE TABLE date (
 );
 
 CREATE TABLE product (
-  id SERIAL PRIMARY KEY,
+  id int PRIMARY KEY,
   name text NOT NULL,
   category text NOT NULL,
   energy int NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE product (
 );
 
 CREATE TABLE location (
-  id SERIAL PRIMARY KEY,
+  id int PRIMARY KEY,
   type int NOT NULL,
   city text NOT NULL,
   country text NOT NULL,
