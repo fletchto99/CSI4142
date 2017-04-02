@@ -1,9 +1,9 @@
 CREATE TABLE date (
   id SERIAL PRIMARY KEY,
   date date NOT NULL,
-  day int NOT NULL CHECK (day >= 0 AND day <= 6),
-  week int NOT NULL CHECK (week >= 0 AND week <= 52),
-  month int NOT NULL CHECK (month > 0 AND month <= 12),
+  day int NOT NULL CHECK (day >= 0 AND day < 7),
+  week int NOT NULL CHECK (week >= 0 AND week < 52),
+  month int NOT NULL CHECK (month >= 0 AND month < 12),
   year int NOT NULL,
   weekend boolean NOT NULL
 );
