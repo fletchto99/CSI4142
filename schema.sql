@@ -1,5 +1,5 @@
 CREATE TABLE date (
-  id int PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   date date NOT NULL,
   day int NOT NULL CHECK (day >= 0 AND day <= 6),
   week int NOT NULL CHECK (week >= 0 AND week <= 52),
@@ -9,7 +9,7 @@ CREATE TABLE date (
 );
 
 CREATE TABLE product (
-  id int PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name text NOT NULL,
   category text NOT NULL,
   energy int NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE product (
 );
 
 CREATE TABLE location (
-  id int PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   type int NOT NULL,
   city text NOT NULL,
   country text NOT NULL,
