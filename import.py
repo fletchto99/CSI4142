@@ -10,49 +10,39 @@ dbconfig = {
     'user': 'postgres'
 }
 
-conn = psycopg2.connect(**dbconfig)
-cur = conn.cursor()
+def latest_country_data(path):
+    data = []
+
+    print('Reading country data from: {}'.format(path))
+    with open(path) as f:
+        reader = csv.reader(f, delimiter=',', quotechar='"')
+
+        # Skip useless header data
+        for i in range(4): next(reader)
+
+        head = dict(reversed(field) for field in enumerate(next(reader)))
+
+        for row in reader:
+            history = (row[head[str(i)]] for i in range(2016, 1959, -1))
+            latest = next((latest for latest in history if len(latest)), '')
+            data.append((row[head['Country Name']], latest))
+
+    return dict(data)
 
 dates = {}
 products = {}
 locations = {}
-product_prices = {}
+product_prices = []
 
-# Country specific data
-gdp = {}
-population = {}
-life_expectancy = {}
-avg_annual_income = {}
+# Obtain country specific data
+gdp = latest_country_data('datasets2/gdp.csv')
+population = latest_country_data('datasets2/population-total.csv')
+life_expectancy = latest_country_data('datasets2/life-expetency.csv')
+avg_annual_income = latest_country_data('datasets2/avg-annual-income.csv')
 
-def latest_country_data(f):
-    reader = csv.reader(f, delimiter=',', quotechar='"')
+with open('datasets2/food-prices.csv') as f:
+    print('Importing food prices from: {}'.format(f.name))
 
-    # Skip useless header data
-    for i in range(4): next(reader)
-
-    head = dict(reversed(field) for field in enumerate(next(reader)))
-    data = []
-
-    for row in reader:
-        history = (row[head[str(i)]] for i in range(2016, 1959, -1))
-        latest = next((latest for latest in history if len(latest)), '')
-        data.append((row[head['Country Name']], latest))
-
-    return dict(data)
-
-with open('datasets/gdp.csv') as f:
-    gdp = latest_country_data(f)
-
-with open('datasets/population-total.csv') as f:
-    population = latest_country_data(f)
-
-with open('datasets/life-expetency.csv') as f:
-    life_expectancy = latest_country_data(f)
-
-with open('datasets/avg-annual-income.csv') as f:
-    avg_annual_income = latest_country_data(f)
-
-with open('datasets/food-prices.csv') as f:
     reader = csv.reader(f, delimiter=',', quotechar='"')
     head = dict(reversed(field) for field in enumerate(next(reader)))
 
@@ -84,18 +74,20 @@ with open('datasets/food-prices.csv') as f:
             'avg_annual_income': avg_annual_income[row[head['Country']]]
         }
 
-        product_prices[(
-            row[head['Obs Date (yyyy-MM-dd)']],
-            row[head['Product Code']],
-            row[head['Location Code']]
-        )] = {
+        product_prices.append({
             'date': row[head['Obs Date (yyyy-MM-dd)']],
             'product': row[head['Product Code']],
             'location': row[head['Location Code']],
             'price': row[head['Obs Price']]
-        }
+        })
+
+# Setup database connection
+print('Connecting to database')
+conn = psycopg2.connect(**dbconfig)
+cur = conn.cursor()
 
 # Upsert dates
+print('Inserting records into date dimension')
 cur.executemany("""
 INSERT INTO date (
   date,
@@ -112,7 +104,7 @@ INSERT INTO date (
   %(year)s,
   %(weekend)s
 )
-ON CONFLICT (id) DO
+ON CONFLICT (date) DO
 UPDATE SET
   date = %(date)s,
   day = %(day)s,
@@ -123,6 +115,7 @@ UPDATE SET
 """, dates.values())
 
 # Upsert products
+print('Inserting records into product dimension')
 cur.executemany("""
 INSERT INTO product (
   id,
@@ -147,6 +140,7 @@ UPDATE SET
 """, products.values())
 
 # Upsert locations
+print('Inserting records into location dimension')
 cur.executemany("""
 INSERT INTO location (
   id,
@@ -178,6 +172,7 @@ UPDATE SET
 """, locations.values())
 
 # Upsert product prices
+print('Inserting records into product_price fact table')
 cur.executemany("""
 INSERT INTO product_price (
   date,
@@ -190,9 +185,6 @@ INSERT INTO product_price (
   %(location)s,
   %(price)s
 )
-ON CONFLICT (date, product, location, price) DO
-UPDATE SET
-  price = %(price)s
-""", product_prices.values())
+""", product_prices)
 
 conn.commit()
