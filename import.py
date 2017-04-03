@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import psycopg2
 import csv
+import psycopg2
 from collections import defaultdict
+from datetime import datetime
 
 dbconfig = {
     'dbname': 'postgres',
@@ -17,6 +18,7 @@ products = {}
 locations = {}
 product_prices = {}
 
+# Country specific data
 gdp = {}
 population = {}
 life_expectancy = {}
@@ -55,8 +57,16 @@ with open('datasets/food-prices.csv') as f:
     head = dict(reversed(field) for field in enumerate(next(reader)))
 
     for row in reader:
-        dates[row[head['Obs Date (yyyy-MM-dd)']]] = {
-            'date': row[head['Obs Date (yyyy-MM-dd)']]
+        date = datetime.strptime(row[head['Obs Date (yyyy-MM-dd)']], '%Y-%m-%d')
+
+        year, week, day = date.isocalendar()
+        dates[date] = {
+            'date': date,
+            'day': day,
+            'week': week,
+            'month': date.month,
+            'year': year,
+            'weekend': day >= 6
         }
 
         products[row[head['Product Code']]] = {
@@ -85,7 +95,34 @@ with open('datasets/food-prices.csv') as f:
             'price': row[head['Obs Price']]
         }
 
-# Insert products
+# Upsert dates
+cur.executemany("""
+INSERT INTO date (
+  date,
+  day,
+  week,
+  month,
+  year,
+  weekend
+) VALUES (
+  %(date)s,
+  %(day)s,
+  %(week)s,
+  %(month)s,
+  %(year)s,
+  %(weekend)s
+)
+ON CONFLICT (id) DO
+UPDATE SET
+  date = %(date)s,
+  day = %(day)s,
+  week = %(week)s,
+  month = %(month)s,
+  year = %(year)s,
+  weekend = %(weekend)s
+""", dates.values())
+
+# Upsert products
 cur.executemany("""
 INSERT INTO product (
   id,
@@ -109,7 +146,7 @@ UPDATE SET
   name = %(name)s
 """, products.values())
 
-# Insert locations
+# Upsert locations
 cur.executemany("""
 INSERT INTO location (
   id,
@@ -139,5 +176,23 @@ UPDATE SET
   life_expectancy = %(life_expectancy)s,
   avg_annual_income = %(avg_annual_income)s
 """, locations.values())
+
+# Upsert product prices
+cur.executemany("""
+INSERT INTO product_price (
+  date,
+  product,
+  location,
+  price
+) VALUES (
+  (SELECT id from date WHERE date = %(date)s),
+  %(product)s,
+  %(location)s,
+  %(price)s
+)
+ON CONFLICT (date, product, location, price) DO
+UPDATE SET
+  price = %(price)s
+""", product_prices.values())
 
 conn.commit()

@@ -1,9 +1,9 @@
 CREATE TABLE date (
   id SERIAL PRIMARY KEY,
   date date NOT NULL,
-  day int NOT NULL CHECK (day >= 0 AND day < 7),
-  week int NOT NULL CHECK (week >= 0 AND week < 52),
-  month int NOT NULL CHECK (month >= 0 AND month < 12),
+  day int NOT NULL CHECK (day >= 1 AND day <= 7),
+  week int NOT NULL CHECK (week >= 1 AND week <= 53),
+  month int NOT NULL CHECK (month >= 1 AND month <= 12),
   year int NOT NULL,
   weekend boolean NOT NULL
 );
@@ -33,5 +33,6 @@ CREATE TABLE product_price (
   date int NOT NULL REFERENCES date (id),
   product int NOT NULL REFERENCES product (id),
   location int NOT NULL REFERENCES location (id),
-  price numeric NOT NULL
+  price numeric NOT NULL,
+  PRIMARY KEY (date, product, location, price)
 );
