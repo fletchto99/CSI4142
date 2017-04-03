@@ -1,0 +1,31 @@
+id,name,source,category,energy_100g,carbohydrates_100g,fat_100g,proteins_100g
+11,"Rice, long grain",https://world.openfoodfacts.org/category/long-grain-rices,rices,1390,72.1,1.19,7.36
+12,"Rice, white, broken",https://world.openfoodfacts.org/category/white-rices,rices,1380,72.9,0.871,7.35
+13,"Cornflakes, Kellogg's",https://world.openfoodfacts.org/product/3159470000120/,breakfast-cereals,1604,84,0.9,7
+14,"Flour, wheat",https://world.openfoodfacts.org/category/wheat-flours,flours,1430,69.6,1.43,10.6
+15,"Flour, maize",https://world.openfoodfacts.org/category/cornmeal,flours,1500,81.2,1.02,3.98
+16,"Bread, white, sliced",https://world.openfoodfacts.org/category/white-breads,bread,1030,47.2,2.02,7.86
+21,"Beef, minced",https://world.openfoodfacts.org/category/ground-beef-preparations,meats,886,2.26,15.8,15.6
+22,Chicken legs,https://world.openfoodfacts.org/product/20211684,meats,787,0,13,18
+23,Tuna steaks,https://world.openfoodfacts.org/category/tunas,seafood,702,0.981,8.5,21.7
+24,Shrimps,https://world.openfoodfacts.org/category/shrimps,seafood,388,1.57,1.63,17.8
+25,"Sardine, canned",https://world.openfoodfacts.org/category/canned-sardines,seafood,990,0.572,16,20.7
+31,Milk,https://world.openfoodfacts.org/category/milks,dairy,283,6.61,2.87,3.8
+32,Chicken eggs,https://world.openfoodfacts.org/category/eggs,eggs,605,0.79,10.2,12.6
+33,Sunflower oil,https://world.openfoodfacts.org/category/sunflower-oils,vegetable-oils,3640,0.0364,97.9,0.0396
+34,Palm oil,https://world.openfoodfacts.org/product/9557129019006,vegetable-oils,3400,0,92,0
+35,Soybean oil,https://world.openfoodfacts.org/product/0842918001362,vegetable-oils,3586,0,100,0
+41,Banana,http://nutritiondata.self.com/facts/fruits-and-fruit-juices/1846/2,fruits,837,51.4,0.7,2.5
+42,Orange,http://nutritiondata.self.com/facts/fruits-and-fruit-juices/1966/2,fruits,354,21.1,0.2,1.7
+43,Apple,https://world.openfoodfacts.org/category/apples,fruits,283,15.6,0.311,0.378
+44,Carrots,https://world.openfoodfacts.org/category/carrots,vegtables,215,9.07,0.897,1.15
+45,Onion,https://world.openfoodfacts.org/category/onions,vegtables,451,8.04,4.5,1.77
+46,Maize,https://world.openfoodfacts.org/category/corn,vegtables,712,29.3,3.42,4.54
+47,"Potatoes, brown",https://world.openfoodfacts.org/category/potatoes,vegtables,475,18,3.14,2.49
+48,Cassava,https://world.openfoodfacts.org/product/0038556811115,vegtables,540,33.33,0,0.53
+49,"Beans, white, dried",https://world.openfoodfacts.org/category/white-beans,beans,873,28.5,1.22,14.3
+51,"Sugar, white",https://world.openfoodfacts.org/category/granulated-sugars,sugars,1640,100,0.04,0.0357
+52,Cooking salt,https://world.openfoodfacts.org/category/table-salts,salts,0,0,0,0
+61,"Instant coffee, Nescafe Classic",https://world.openfoodfacts.org/product/8961008203058,coffees,1862,58,19,10.5
+62,"Tea, black",https://world.openfoodfacts.org/category/black-teas,teas,30,0.374,0.0269,1.06
+63,Coca Cola / Pepsi Cola,https://world.openfoodfacts.org/category/colas,sodas,101,6.14,0.0307,0.0452

@@ -29,18 +29,34 @@ def latest_country_data(path):
 
     return dict(data)
 
+def nutrition_facts(path):
+    print ('Reading nutrition facts from: {}'.format(path))
+    with open(path) as f:
+        reader = csv.reader(f, delimiter=',', quotechar='"')
+        head = dict(reversed(field) for field in enumerate(next(reader)))
+        return dict((row[head['id']], {
+            'category': row[head['category']],
+            'energy': row[head['energy_100g']],
+            'carbohydrates': row[head['carbohydrates_100g']],
+            'fat': row[head['fat_100g']],
+            'protein': row[head['proteins_100g']]
+        }) for row in reader)
+
 dates = {}
 products = {}
 locations = {}
 product_prices = []
 
-# Obtain country specific data
-gdp = latest_country_data('datasets2/gdp.csv')
-population = latest_country_data('datasets2/population-total.csv')
-life_expectancy = latest_country_data('datasets2/life-expetency.csv')
-avg_annual_income = latest_country_data('datasets2/avg-annual-income.csv')
+# Obtain latest country statistics
+gdp = latest_country_data('datasets/gdp.csv')
+population = latest_country_data('datasets/population-total.csv')
+life_expectancy = latest_country_data('datasets/life-expetency.csv')
+avg_annual_income = latest_country_data('datasets/avg-annual-income.csv')
 
-with open('datasets2/food-prices.csv') as f:
+# Obtain nutrition facts
+nutrition_facts = nutrition_facts('datasets/nutrition-facts.csv')
+
+with open('datasets/food-prices.csv') as f:
     print('Importing food prices from: {}'.format(f.name))
 
     reader = csv.reader(f, delimiter=',', quotechar='"')
@@ -59,13 +75,20 @@ with open('datasets2/food-prices.csv') as f:
             'weekend': day >= 6
         }
 
+        nutrition = nutrition_facts[row[head['Product Code']]]
         products[row[head['Product Code']]] = {
             'id': row[head['Product Code']],
-            'name': row[head['Product Name']]
+            'name': row[head['Product Name']],
+            'category': nutrition['category'],
+            'energy': nutrition['energy'],
+            'carbohydrates': nutrition['carbohydrates'],
+            'fat': nutrition['fat'],
+            'protein': nutrition['protein']
         }
 
         locations[row[head['Location Code']]] = {
             'id': row[head['Location Code']],
+            'type': row[head['Outlet Type']],
             'city': row[head['Location Name']],
             'country': row[head['Country']],
             'gdp': gdp[row[head['Country']]],
@@ -78,15 +101,13 @@ with open('datasets2/food-prices.csv') as f:
             'date': row[head['Obs Date (yyyy-MM-dd)']],
             'product': row[head['Product Code']],
             'location': row[head['Location Code']],
-            'price': row[head['Obs Price']]
+            'price': row[head['Conv. Price']]
         })
 
-# Setup database connection
 print('Connecting to database')
 conn = psycopg2.connect(**dbconfig)
 cur = conn.cursor()
 
-# Upsert dates
 print('Inserting records into date dimension')
 cur.executemany("""
 INSERT INTO date (
@@ -114,7 +135,6 @@ UPDATE SET
   weekend = %(weekend)s
 """, dates.values())
 
-# Upsert products
 print('Inserting records into product dimension')
 cur.executemany("""
 INSERT INTO product (
@@ -128,18 +148,22 @@ INSERT INTO product (
 ) VALUES (
   %(id)s,
   %(name)s,
-  '',
-  0,
-  0,
-  0,
-  0
+  %(category)s,
+  %(energy)s,
+  %(carbohydrates)s,
+  %(fat)s,
+  %(protein)s
 )
 ON CONFLICT (id) DO
 UPDATE SET
-  name = %(name)s
+  name = %(name)s,
+  category = %(category)s,
+  energy = %(energy)s,
+  carbohydrates = %(carbohydrates)s,
+  fat = %(fat)s,
+  protein = %(protein)s
 """, products.values())
 
-# Upsert locations
 print('Inserting records into location dimension')
 cur.executemany("""
 INSERT INTO location (
@@ -153,7 +177,7 @@ INSERT INTO location (
   avg_annual_income
 ) VALUES (
   %(id)s,
-  0,
+  %(type)s,
   %(city)s,
   %(country)s,
   %(gdp)s,
@@ -163,6 +187,7 @@ INSERT INTO location (
 )
 ON CONFLICT (id) DO
 UPDATE SET
+  type = %(type)s,
   city = %(city)s,
   country = %(country)s,
   gdp = %(gdp)s,
@@ -171,7 +196,6 @@ UPDATE SET
   avg_annual_income = %(avg_annual_income)s
 """, locations.values())
 
-# Upsert product prices
 print('Inserting records into product_price fact table')
 cur.executemany("""
 INSERT INTO product_price (

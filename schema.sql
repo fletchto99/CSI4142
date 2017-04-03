@@ -12,15 +12,15 @@ CREATE TABLE product (
   id int PRIMARY KEY,
   name text NOT NULL UNIQUE,
   category text NOT NULL,
-  energy int NOT NULL,
-  carbohydrates int NOT NULL,
-  fat int NOT NULL,
-  protein int NOT NULL
+  energy numeric NOT NULL,
+  carbohydrates numeric NOT NULL,
+  fat numeric NOT NULL,
+  protein numeric NOT NULL
 );
 
 CREATE TABLE location (
   id int PRIMARY KEY,
-  type int NOT NULL,
+  type text NOT NULL,
   city text NOT NULL,
   country text NOT NULL,
   gdp numeric NOT NULL,
