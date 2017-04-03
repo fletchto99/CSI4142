@@ -23,15 +23,15 @@ CREATE TABLE location (
   type int NOT NULL,
   city text NOT NULL,
   country text NOT NULL,
-  gdp int NOT NULL,
+  gdp numeric NOT NULL,
   population int NOT NULL,
-  life_expectancy int NOT NULL,
-  average_income numeric(2) NOT NULL
+  life_expectancy numeric NOT NULL,
+  avg_annual_income numeric NOT NULL
 );
 
 CREATE TABLE product_price (
   date int NOT NULL REFERENCES date (id),
   product int NOT NULL REFERENCES product (id),
   location int NOT NULL REFERENCES location (id),
-  price numeric(2) NOT NULL
+  price numeric NOT NULL
 );
