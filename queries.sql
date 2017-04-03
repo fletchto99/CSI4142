@@ -6,6 +6,13 @@
  * specific day, and roll up again.
  */
 
+SELECT  l.country, pp.price, p.name, d.year, d.month, d.day
+FROM product_price pp
+  INNER JOIN location l on pp.location = l.id
+  INNER JOIN date d on d.id = pp.date
+  INNER JOIN  product p on p.id = pp.product
+GROUP BY l.country, p.name, pp.price, d.year, d.month, d.day;
+
 /*
  * Query 2
  *
@@ -15,6 +22,11 @@
  * from 6 months, to one month, to a specific day, and roll up again.
  */
 
+SELECT price
+FROM product_price pp
+  INNER JOIN date d on pp.date=date.id
+WHERE
+
 /*
  * Query 3
  *
@@ -23,6 +35,13 @@
  * oranges are grouped into fruits while minced beef and chicken legs are grouped into
  * fresh meat.
  */
+
+SELECT p.category, avg(price), d.year, d.month, d.day
+FROM product_price pp
+  INNER JOIN location l on pp.location = l.id
+  INNER JOIN date d on d.id = pp.date
+  INNER JOIN  product p on p.id = pp.product
+group by p.category
 
 /*
  * Query 4
@@ -44,6 +63,13 @@
  * Explore the prices of a specific product (e.g. apples) in terms of socio-economic
  * factors, such as the average income of a country.
  */
+
+SELECT pp.price, l.avg_annual_income, l.life_expectancy, l.population
+FROM product_price pp
+  INNER JOIN location l on pp.location = l.id
+  INNER JOIN date d on d.id = pp.date
+  INNER JOIN  product p on p.id = pp.product
+group by l.country, d.year, d.month, d.day, pp.price, l.avg_annual_income, l.life_expectancy, l.population
 
 /*
  * Query 7
