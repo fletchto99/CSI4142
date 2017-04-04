@@ -5,11 +5,12 @@
  * country. The user should be able to drill down from 6 months, to one month, to a
  * specific day, and roll up again.
  *
- * Line graph, each line being an individual item within the specified country, city or location
+ * Line graph, each line being an individual product within the specified country, city or location
  * X axis: Date (by month)
  * Y axis: Price
  */
 
+-- Country drilldown
 SELECT  l.country, avg(pp.price), p.name, d.year, d.month, d.day
 FROM product_price pp
   INNER JOIN location l
@@ -18,7 +19,18 @@ FROM product_price pp
     ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-GROUP BY l.country, d.year, d.month, d.day, p.name, pp.price;
+GROUP BY l.country, d.year, d.month, d.day, p.name;
+
+-- City drilldown
+SELECT  l.city, avg(pp.price), p.name, d.year, d.month, d.day
+FROM product_price pp
+  INNER JOIN location l
+    ON pp.location = l.id
+  INNER JOIN date d
+    ON d.id = pp.date
+  INNER JOIN  product p
+    ON p.id = pp.product
+GROUP BY l.city, d.year, d.month, d.day, p.name;
 
 /*
  * Query 2 - TODO
@@ -74,7 +86,7 @@ GROUP BY p.category;
  * Y axis: price
  */
 
-SELECT d.day, p.name, AVG(pp.price)
+SELECT d.day, p.category, AVG(pp.price)
 FROM product_price pp
   INNER JOIN date d
     ON d.id = pp.date
@@ -93,7 +105,9 @@ ORDER BY p.name DESC;
  * Y axis: Price
  */
 
-SELECT p.name, AVG(pp.price), d.year, d.month, d.day, l.country, l.city
+
+-- Per country
+SELECT l.country, p.name, AVG(pp.price), d.date
 FROM product_price pp
   INNER JOIN location l
     ON pp.location = l.id
@@ -101,7 +115,20 @@ FROM product_price pp
     ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-GROUP BY l.country, l.city, p.name;
+where p.name = 'Apple' -- we chose to look at apples, but it could have been any food
+GROUP BY l.country, p.name, d.date;
+
+-- Per city, per location
+SELECT l.city, p.name, AVG(pp.price), d.date
+FROM product_price pp
+  INNER JOIN location l
+    ON pp.location = l.id
+  INNER JOIN date d
+    ON d.id = pp.date
+  INNER JOIN  product p
+    ON p.id = pp.product
+where p.name = 'Apple' -- we chose to look at apples, but it could have been any food
+GROUP BY l.city, p.name, d.date;
 
 /*
  * Query 6  - COMPLETE
