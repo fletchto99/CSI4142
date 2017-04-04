@@ -189,7 +189,7 @@ where p.name='Apple'
 GROUP BY p.name, l.country, l.avg_annual_income, l.life_expectancy, l.population;
 
 /*
- * Query 7 -- TODO: not working, takes forever?
+ * Query 7 - COMPLETE
  *
  * Compare the prices of complementary products (e.g. white rice and long-grain rice).
  *
@@ -220,8 +220,32 @@ GROUP BY p.name, d.date;
 
 
 /*
- * Query 8
+ * Query 8 - COMPLETE
  *
  * Compare the prices of two complementary products (e.g. white rice and long-grain rice),
  * within a specific country. Next, drill down by city and location.
  */
+
+-- Country drilldown
+SELECT p.name, AVG(pp.price), d.date
+FROM product_price pp
+  INNER JOIN  product p
+    ON p.id = pp.product
+  INNER JOIN  date d
+    ON d.id = pp.date
+  INNER JOIN  location l
+    ON l.id = pp.location
+WHERE (p.name = 'Apple' OR p.name = 'Orange' OR p.name = 'Banana') AND l.country = 'India'
+GROUP BY p.name, d.date;
+
+-- City drilldown
+SELECT p.name, AVG(pp.price), d.date
+FROM product_price pp
+  INNER JOIN  product p
+    ON p.id = pp.product
+  INNER JOIN  date d
+    ON d.id = pp.date
+  INNER JOIN  location l
+    ON l.id = pp.location
+WHERE (p.name = 'Apple' OR p.name = 'Orange' OR p.name = 'Banana') AND l.country = 'India' AND l.city = 'New Delhi'
+GROUP BY p.name, d.date;
