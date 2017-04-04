@@ -2,7 +2,7 @@
  * Query 1  - COMPLETE
  *
  * Explore the data in order to get “a feel of” the prices of the various products in a
- * country. The user should be able to drill down from 6 months, to one month, to a
+ * country. The user should be able to drill down from 1 year, to one month, to a
  * specific day, and roll up again.
  *
  * Line graph, each line being an individual product within the specified country, city or location
@@ -10,8 +10,8 @@
  * Y axis: Price
  */
 
--- Country drilldown
-SELECT  l.country, avg(pp.price), p.name, d.year, d.month, d.day
+-- Year drilldown
+SELECT  d.year, p.name, avg(pp.price)
 FROM product_price pp
   INNER JOIN location l
     ON pp.location = l.id
@@ -19,10 +19,11 @@ FROM product_price pp
     ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-GROUP BY l.country, d.year, d.month, d.day, p.name;
+WHERE l.country='India'
+GROUP BY d.year, p.name;
 
--- City drilldown
-SELECT  l.city, avg(pp.price), p.name, d.year, d.month, d.day
+-- Month drilldown
+SELECT  d.month, p.name, avg(pp.price)
 FROM product_price pp
   INNER JOIN location l
     ON pp.location = l.id
@@ -30,7 +31,20 @@ FROM product_price pp
     ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-GROUP BY l.city, d.year, d.month, d.day, p.name;
+WHERE l.country='India'
+GROUP BY d.month, p.name;
+
+-- Day drilldown
+SELECT  d.day, p.name, avg(pp.price)
+FROM product_price pp
+  INNER JOIN location l
+    ON pp.location = l.id
+  INNER JOIN date d
+    ON d.id = pp.date
+  INNER JOIN  product p
+    ON p.id = pp.product
+WHERE l.country='India'
+GROUP BY d.day, p.name;
 
 /*
  * Query 2 - TODO
