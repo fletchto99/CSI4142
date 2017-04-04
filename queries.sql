@@ -191,23 +191,33 @@ GROUP BY p.name, l.country, l.avg_annual_income, l.life_expectancy, l.population
 /*
  * Query 7 -- TODO: not working, takes forever?
  *
- * Compare the prices of two complementary products (e.g. white rice and long-grain rice).
+ * Compare the prices of complementary products (e.g. white rice and long-grain rice).
  *
  * Line graph, 2 lines, 1 for each product
  * X axis: Date (by month)
  * Y axis: Price
  */
 
-SELECT p.name, AVG(pp.price), p2.name, AVG(pp.price)
+-- Rices
+SELECT p.name, AVG(pp.price), d.date
 FROM product_price pp
-  CROSS JOIN product_price pp2
   INNER JOIN  product p
     ON p.id = pp.product
-  INNER JOIN  product p2
-    ON p2.id = pp2.product
-WHERE
-  p.id != p2.id
-GROUP BY p.name, p2.name;
+  INNER JOIN  date d
+    ON d.id = pp.date
+WHERE p.name = 'Rice, white, broken' OR p.name = 'Rice, long grain'
+GROUP BY p.name, d.date;
+
+-- Vegetable Oils
+SELECT p.name, AVG(pp.price), d.date
+FROM product_price pp
+  INNER JOIN  product p
+    ON p.id = pp.product
+  INNER JOIN  date d
+    ON d.id = pp.date
+WHERE p.name = 'Palm oil' OR p.name = 'Soybean oil' OR p.name='Sunflower oil'
+GROUP BY p.name, d.date;
+
 
 /*
  * Query 8
