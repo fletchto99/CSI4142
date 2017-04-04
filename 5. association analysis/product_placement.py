@@ -17,8 +17,12 @@ def product_placement(conn, country):
     GROUP BY pp.date
     """)
 
-    for x in apriori((set(row[0]) for row in cur), min_support=1.0):
-        print(" + ".join(x.items))
+    print('> Preprocessing data for country: {}'.format(country))
+    results = (set(row[0]) for row in cur)
+
+    print('> Constructing correlation model (using apriori algorithm)')
+    for result in apriori(results, min_support=1.0):
+        print(" + ".join(result.items))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
