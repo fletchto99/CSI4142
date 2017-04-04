@@ -47,7 +47,7 @@ WHERE l.country='India'
 GROUP BY d.day, p.name;
 
 /*
- * Query 2 - TODO
+ * Query 2 - COMPLETE
  *
  * Explore the data in order to get “a feel of” the price differences of the products when
  * considering more than one country. For example, one may want to contrast the price
@@ -55,7 +55,8 @@ GROUP BY d.day, p.name;
  * from 6 months, to one month, to a specific day, and roll up again.
  */
 
-SELECT l.country, avg(pp.price), p.name, d.year, d.month, d.day
+-- Year drilldown
+SELECT l.country, avg(pp.price), d.year
 FROM product_price pp
   INNER JOIN location l
     ON pp.location = l.id
@@ -63,7 +64,32 @@ FROM product_price pp
     ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-WHERE
+WHERE p.name='Tuna steaks'
+GROUP BY l.country, d.year;
+
+-- month drilldown
+SELECT l.country, avg(pp.price), d.month
+FROM product_price pp
+  INNER JOIN location l
+    ON pp.location = l.id
+  INNER JOIN date d
+    ON d.id = pp.date
+  INNER JOIN  product p
+    ON p.id = pp.product
+WHERE p.name='Tuna steaks'
+GROUP BY l.country, d.month;
+
+-- day drilldown
+SELECT l.country, avg(pp.price), d.day
+FROM product_price pp
+  INNER JOIN location l
+    ON pp.location = l.id
+  INNER JOIN date d
+    ON d.id = pp.date
+  INNER JOIN  product p
+    ON p.id = pp.product
+WHERE p.name='Tuna steaks'
+GROUP BY l.country, d.day;
 
 /*
  * Query 3  - COMPLETE
