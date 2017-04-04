@@ -1,0 +1,6 @@
+Since in most locations almost every possible product is priced within
+a single day, we were not able to find any strong correlations between
+product pricings using the apriori algorithm. However we still learned
+a few facts about the data. One thing that stood out was that for
+every city in Kenya, every day, wheat flour and long grain rice were
+priced together in the same day.
