@@ -139,15 +139,14 @@ GROUP BY l.city, p.name, d.date;
  * Not sure how to represent in dashboard...
  */
 
-SELECT p.name, AVG(pp.price), l.avg_annual_income, l.life_expectancy, l.population
+SELECT p.name, AVG(pp.price), l.country, l.avg_annual_income, l.life_expectancy, l.population
 FROM product_price pp
   INNER JOIN location l
     ON pp.location = l.id
-  INNER JOIN date d
-    ON d.id = pp.date
   INNER JOIN  product p
     ON p.id = pp.product
-GROUP BY p.name, l.country, d.year, d.month, d.day, pp.price, l.avg_annual_income, l.life_expectancy, l.population;
+where p.name='Apple'
+GROUP BY p.name, l.country, l.avg_annual_income, l.life_expectancy, l.population;
 
 /*
  * Query 7 -- TODO: not working, takes forever?
