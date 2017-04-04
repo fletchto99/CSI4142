@@ -6,7 +6,7 @@ from collections import defaultdict
 from datetime import datetime
 
 dbconfig = {
-    'dbname': 'postgres',
+    'dbname': 'csi4142_project',
     'user': 'postgres'
 }
 
